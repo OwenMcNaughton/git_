@@ -1,0 +1,33 @@
+[gd_scene load_steps=6 format=3 uid="uid://cdv3xe7xjjpyx"]
+
+[ext_resource type="Script" path="res://tree.gd" id="1_hstan"]
+[ext_resource type="Material" uid="uid://d0nty5i4fd81i" path="res://bottom_leaves.tres" id="2_1dpty"]
+[ext_resource type="Material" uid="uid://7w65awy1hqfc" path="res://top_leaves.tres" id="3_bkp3e"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_uj2u5"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_2r22m"]
+subdivide_width = 64
+subdivide_depth = 64
+
+[node name="tree" type="Node3D"]
+script = ExtResource("1_hstan")
+
+[node name="Area3D" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("BoxShape3D_uj2u5")
+
+[node name="bottom_leaves" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.5, 0)
+material_override = ExtResource("2_1dpty")
+mesh = SubResource("QuadMesh_2r22m")
+
+[node name="top_leaves" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 1, 0)
+material_override = ExtResource("3_bkp3e")
+mesh = SubResource("QuadMesh_2r22m")
+
+[connection signal="area_entered" from="Area3D" to="." method="_on_area_3d_area_entered"]
+[connection signal="area_exited" from="Area3D" to="." method="_on_area_3d_area_exited"]

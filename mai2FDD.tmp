@@ -1,0 +1,131 @@
+[gd_scene load_steps=9 format=3 uid="uid://b0fq5ymm1atea"]
+
+[ext_resource type="PackedScene" uid="uid://cdv3xe7xjjpyx" path="res://tree.tscn" id="1_xohk6"]
+[ext_resource type="Script" path="res://slider.gd" id="2_cnslh"]
+[ext_resource type="Script" path="res://DirectionalLight3D.gd" id="2_vomk3"]
+[ext_resource type="Script" path="res://cursor.gd" id="3_yuqjj"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_2byye"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6qkth"]
+size = Vector3(0.02, 0.02, 0.02)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r1y7i"]
+albedo_color = Color(1, 0, 0.247059, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6w74d"]
+size = Vector3(0.02, 0.02, 0.02)
+
+[node name="Main" type="Node3D"]
+
+[node name="tree" parent="." instance=ExtResource("1_xohk6")]
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 5, 0)
+projection = 1
+size = 2.0
+far = 21.19
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
+mesh = SubResource("PlaneMesh_2byye")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.936672, -0.350207, 0, 0.175104, 0.468336, 0.866025, -0.303289, -0.811182, 0.5, 0, 2.50705, 0)
+light_bake_mode = 0
+shadow_enabled = true
+directional_shadow_mode = 0
+directional_shadow_max_distance = 6.8
+script = ExtResource("2_vomk3")
+
+[node name="cursor" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.18058)
+script = ExtResource("3_yuqjj")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="cursor"]
+shape = SubResource("BoxShape3D_6qkth")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="cursor"]
+material_override = SubResource("StandardMaterial3D_r1y7i")
+mesh = SubResource("BoxMesh_6w74d")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control"]
+custom_minimum_size = Vector2(400, 150)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+grow_vertical = 0
+
+[node name="sunrot_x" type="PanelContainer" parent="Control/VBoxContainer"]
+layout_mode = 2
+script = ExtResource("2_cnslh")
+
+[node name="Label" type="Label" parent="Control/VBoxContainer/sunrot_x"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "TEXT"
+
+[node name="HSlider" type="HSlider" parent="Control/VBoxContainer/sunrot_x"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+min_value = -3.14
+max_value = 3.14
+step = 0.01
+value = -0.14
+
+[node name="sunrot_y" type="PanelContainer" parent="Control/VBoxContainer"]
+layout_mode = 2
+script = ExtResource("2_cnslh")
+
+[node name="Label" type="Label" parent="Control/VBoxContainer/sunrot_y"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "TEXT"
+
+[node name="HSlider" type="HSlider" parent="Control/VBoxContainer/sunrot_y"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+min_value = -3.14
+max_value = 3.14
+step = 0.01
+value = -0.14
+
+[node name="sunrot_y2" type="PanelContainer" parent="Control/VBoxContainer"]
+layout_mode = 2
+script = ExtResource("2_cnslh")
+
+[node name="Label" type="Label" parent="Control/VBoxContainer/sunrot_y2"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "TEXT"
+
+[node name="HSlider" type="HSlider" parent="Control/VBoxContainer/sunrot_y2"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+min_value = -3.14
+max_value = 3.14
+step = 0.01
+value = -0.14
+
+[connection signal="area_entered" from="cursor" to="tree" method="_on_cursor_area_entered"]
+[connection signal="value_changed" from="Control/VBoxContainer/sunrot_x/HSlider" to="DirectionalLight3D" method="_on_x_changed"]
+[connection signal="value_changed" from="Control/VBoxContainer/sunrot_x/HSlider" to="Control/VBoxContainer/sunrot_x" method="_on_value_changed"]
+[connection signal="value_changed" from="Control/VBoxContainer/sunrot_y/HSlider" to="DirectionalLight3D" method="_on_y_changed"]
+[connection signal="value_changed" from="Control/VBoxContainer/sunrot_y/HSlider" to="Control/VBoxContainer/sunrot_y" method="_on_value_changed"]
+[connection signal="value_changed" from="Control/VBoxContainer/sunrot_y2/HSlider" to="DirectionalLight3D" method="_on_y_changed"]
+[connection signal="value_changed" from="Control/VBoxContainer/sunrot_y2/HSlider" to="Control/VBoxContainer/sunrot_y2" method="_on_value_changed"]

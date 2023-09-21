@@ -1,0 +1,159 @@
+[gd_scene load_steps=11 format=3 uid="uid://b0fq5ymm1atea"]
+
+[ext_resource type="PackedScene" uid="uid://cdv3xe7xjjpyx" path="res://tree.tscn" id="1_xohk6"]
+[ext_resource type="Script" path="res://Camera3D.gd" id="2_44nmr"]
+[ext_resource type="Script" path="res://slider.gd" id="2_cnslh"]
+[ext_resource type="Script" path="res://DirectionalLight3D.gd" id="2_vomk3"]
+[ext_resource type="Script" path="res://cursor.gd" id="3_yuqjj"]
+[ext_resource type="Texture2D" uid="uid://dxnnun5few3e2" path="res://arrow.png" id="6_070y1"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_2byye"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6qkth"]
+size = Vector3(0.02, 0.02, 0.02)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r1y7i"]
+albedo_color = Color(1, 0, 0.247059, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6w74d"]
+size = Vector3(0.02, 0.02, 0.02)
+
+[node name="Main" type="Node3D"]
+
+[node name="tree" parent="." instance=ExtResource("1_xohk6")]
+
+[node name="tree2" parent="." instance=ExtResource("1_xohk6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -92.5265, 0, 90.8889)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 5, 0)
+projection = 1
+size = 2.0
+far = 21.19
+script = ExtResource("2_44nmr")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0)
+mesh = SubResource("PlaneMesh_2byye")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.938506, 0.322745, 0.12265, -0.0668227, -0.178726, 0.981627, 0.338736, -0.929458, -0.146168, 0, 2.50705, 0)
+light_bake_mode = 0
+shadow_enabled = true
+directional_shadow_mode = 0
+directional_shadow_split_1 = 0.416
+directional_shadow_fade_start = 0.0
+script = ExtResource("2_vomk3")
+
+[node name="cursor" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.18058)
+script = ExtResource("3_yuqjj")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="cursor"]
+shape = SubResource("BoxShape3D_6qkth")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="cursor"]
+material_override = SubResource("StandardMaterial3D_r1y7i")
+mesh = SubResource("BoxMesh_6w74d")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control"]
+custom_minimum_size = Vector2(400, 150)
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+grow_vertical = 0
+
+[node name="sunrot_x" type="PanelContainer" parent="Control/VBoxContainer"]
+layout_mode = 2
+script = ExtResource("2_cnslh")
+
+[node name="Label" type="Label" parent="Control/VBoxContainer/sunrot_x"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "TEXT"
+
+[node name="HSlider" type="HSlider" parent="Control/VBoxContainer/sunrot_x"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+min_value = -3.14
+max_value = 3.14
+step = 0.01
+value = -1.78
+
+[node name="sunrot_y" type="PanelContainer" parent="Control/VBoxContainer"]
+layout_mode = 2
+script = ExtResource("2_cnslh")
+
+[node name="Label" type="Label" parent="Control/VBoxContainer/sunrot_y"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "TEXT"
+
+[node name="HSlider" type="HSlider" parent="Control/VBoxContainer/sunrot_y"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+min_value = -3.14
+max_value = 3.14
+step = 0.01
+value = -0.71
+
+[node name="wind_rot" type="PanelContainer" parent="Control/VBoxContainer"]
+layout_mode = 2
+script = ExtResource("2_cnslh")
+
+[node name="arrow" type="Sprite2D" parent="Control/VBoxContainer/wind_rot"]
+position = Vector2(14, 8)
+scale = Vector2(0.28125, 0.234375)
+texture = ExtResource("6_070y1")
+
+[node name="HSlider" type="HSlider" parent="Control/VBoxContainer/wind_rot"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+min_value = -3.14
+max_value = 3.14
+step = 0.01
+value = -0.14
+
+[node name="wind_strength" type="PanelContainer" parent="Control/VBoxContainer"]
+layout_mode = 2
+script = ExtResource("2_cnslh")
+
+[node name="Label" type="Label" parent="Control/VBoxContainer/wind_strength"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "TEXT"
+
+[node name="HSlider" type="HSlider" parent="Control/VBoxContainer/wind_strength"]
+custom_minimum_size = Vector2(350, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+min_value = 0.01
+max_value = 3.0
+step = 0.01
+value = 1.0
+exp_edit = true
+
+[connection signal="value_changed" from="Control/VBoxContainer/sunrot_x/HSlider" to="DirectionalLight3D" method="_on_x_changed"]
+[connection signal="value_changed" from="Control/VBoxContainer/sunrot_x/HSlider" to="Control/VBoxContainer/sunrot_x" method="_on_value_changed"]
+[connection signal="value_changed" from="Control/VBoxContainer/sunrot_y/HSlider" to="DirectionalLight3D" method="_on_y_changed"]
+[connection signal="value_changed" from="Control/VBoxContainer/sunrot_y/HSlider" to="Control/VBoxContainer/sunrot_y" method="_on_value_changed"]
+[connection signal="value_changed" from="Control/VBoxContainer/wind_rot/HSlider" to="Control/VBoxContainer/wind_rot" method="_on_wind_rot_changed"]
+[connection signal="value_changed" from="Control/VBoxContainer/wind_rot/HSlider" to="Control/VBoxContainer/wind_rot" method="_on_arrow_changed"]
+[connection signal="value_changed" from="Control/VBoxContainer/wind_strength/HSlider" to="Control/VBoxContainer/wind_strength" method="_on_value_changed"]
+[connection signal="value_changed" from="Control/VBoxContainer/wind_strength/HSlider" to="Control/VBoxContainer/wind_strength" method="_onwind_strength_changed"]
