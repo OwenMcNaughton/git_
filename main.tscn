@@ -1,7 +1,8 @@
-[gd_scene load_steps=13 format=3 uid="uid://b0fq5ymm1atea"]
+[gd_scene load_steps=14 format=3 uid="uid://b0fq5ymm1atea"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_8vsfp"]
 [ext_resource type="Script" path="res://tree_manager.gd" id="1_vrdr0"]
+[ext_resource type="PackedScene" uid="uid://cdv3xe7xjjpyx" path="res://tree.tscn" id="1_xohk6"]
 [ext_resource type="Script" path="res://Camera3D.gd" id="2_44nmr"]
 [ext_resource type="Script" path="res://slider.gd" id="2_cnslh"]
 [ext_resource type="Script" path="res://DirectionalLight3D.gd" id="2_vomk3"]
@@ -176,6 +177,32 @@ max_value = 3.0
 step = 0.01
 value = 1.0
 exp_edit = true
+
+[node name="tree" parent="." instance=ExtResource("1_xohk6")]
+
+[node name="tree2" parent="." instance=ExtResource("1_xohk6")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 0, 1.40131)
+
+[node name="tree3" parent="." instance=ExtResource("1_xohk6")]
+transform = Transform3D(-0.594346, 0, 0.80421, 0, 1, 0, -0.80421, 0, -0.594346, -1.42518, 0, 1.40131)
+
+[node name="tree4" parent="." instance=ExtResource("1_xohk6")]
+transform = Transform3D(0.855608, 0, 0.517624, 0, 1, 0, -0.517624, 0, 0.855608, -1.40043, 0, -0.0783035)
+
+[node name="tree5" parent="." instance=ExtResource("1_xohk6")]
+transform = Transform3D(0.178476, 0, 0.983944, 0, 1, 0, -0.983944, 0, 0.178476, -1.40043, 0, -1.38471)
+
+[node name="tree6" parent="." instance=ExtResource("1_xohk6")]
+transform = Transform3D(-0.967431, 0, 0.253133, 0, 1, 0, -0.253133, 0, -0.967431, 0.0791762, 0, -1.38471)
+
+[node name="tree7" parent="." instance=ExtResource("1_xohk6")]
+transform = Transform3D(-0.663665, 0, -0.74803, 0, 1, 0, 0.74803, 0, -0.663665, 1.5192, 0, -1.38471)
+
+[node name="tree8" parent="." instance=ExtResource("1_xohk6")]
+transform = Transform3D(0.0135607, 0, -0.999908, 0, 1, 0, 0.999908, 0, 0.0135607, 1.5192, 0, 0.0800493)
+
+[node name="tree9" parent="." instance=ExtResource("1_xohk6")]
+transform = Transform3D(-0.844655, 0, 0.535311, 0, 1, 0, -0.535311, 0, -0.844655, 1.5192, 0, 1.45574)
 
 [connection signal="value_changed" from="Control/VBoxContainer/sunrot_x/HSlider" to="DirectionalLight3D" method="_on_x_changed"]
 [connection signal="value_changed" from="Control/VBoxContainer/sunrot_x/HSlider" to="Control/VBoxContainer/sunrot_x" method="_on_value_changed"]

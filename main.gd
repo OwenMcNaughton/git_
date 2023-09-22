@@ -14,8 +14,8 @@ func set_cam_size(size: float) -> void:
 
 
 func _ready():
-	get_tree().root.use_occlusion_culling = true
-	for x in range(-128, 128, 2):
-		for y in range(-128, 128, 2):
+	return
+	for x in range(-128, 128, 4):
+		for y in range(-128, 128, 4):
 			var spawn_loc: Vector3 = Vector3(x, 0, y)
 			$trees.add_tree(spawn_loc)

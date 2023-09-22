@@ -5,7 +5,6 @@ render_mode blend_mix;
 uniform float radius = 0.1;
 uniform vec2 vignette_center;
 
-
 uniform vec4 albedo : source_color;
 uniform sampler2D image_texture;
 uniform float alpha_threshold = 0.01;
@@ -22,6 +21,7 @@ uniform float rotation : hint_range(-3.14159, 3.14159) = 0.0;
 
 uniform float time_factor : hint_range(0.1, 3) = 1;
 uniform float time_offset : hint_range(0.8, 1.2) = 1.0;
+
 
 vec2 rotate(vec2 v, float a) {
     float s = sin(a);
@@ -45,13 +45,12 @@ vec3 make_turbulence(vec2 uv, float gradient_value) {
 }
 
 vec3 make_sway(vec2 uv) {
-    float sway_value = sin(TIME * sway_frequency) * sway_amplitude;
+    float sway_value = sin((TIME + time_offset) * sway_frequency) * sway_amplitude;
     return vec3(
 		sin(-rotation + 3.14 / 2.0) * sway_value,
 		cos(-rotation + 3.14 / 2.0) * sway_value,
 		0
 	);
-	
 }
 
 void vertex() {

@@ -9,6 +9,16 @@ func _ready() -> void:
 	$leaves_2.material_override = $leaves_2.material_override.duplicate()
 	$leaves_3.material_override = $leaves_3.material_override.duplicate()
 	set_low_lod()
+	
+	$leaves_1.material_override.set_shader_parameter("rotation", 90 - rotation.y)
+	$leaves_2.material_override.set_shader_parameter("rotation", 90 - rotation.y)
+	$leaves_3.material_override.set_shader_parameter("rotation", 90 - rotation.y)
+	
+	var to = Utils.randf_range(0.8, 1.2)
+	$leaves_1.material_override.set_shader_parameter("time_offset", to)
+	$leaves_2.material_override.set_shader_parameter("time_offset", to) 
+	$leaves_3.material_override.set_shader_parameter("time_offset", to)
+	
 	add_to_group("trees")
 
 
@@ -16,9 +26,21 @@ func _process(delta: float) -> void:
 	if _area != null:
 		var gp = global_position - _area.global_position
 		gp = Vector2(normalize(gp.x), normalize(gp.z))
+		gp = rotate_around_center(gp, Vector2(0.5, 0.5), rotation.y)
 		$leaves_1.material_override.set_shader_parameter("vignette_center", gp)
 		$leaves_2.material_override.set_shader_parameter("vignette_center", gp)
 		$leaves_3.material_override.set_shader_parameter("vignette_center", gp)
+
+
+func rotate_around_center(point: Vector2, center: Vector2, angle: float) -> Vector2:
+	var s = sin(angle)
+	var c = cos(angle)
+	point -= center
+	var xnew = point.x * c - point.y * s
+	var ynew = point.x * s + point.y * c
+	point.x = xnew + center.x
+	point.y = ynew + center.y
+	return point
 
 
 func normalize(value: float) -> float:
@@ -39,9 +61,9 @@ func _on_area_3d_area_exited(area: Area3D) -> void:
 
 
 func set_wind_rot(rads: float):
-	$leaves_1.material_override.set_shader_parameter("rotation", rads)
-	$leaves_2.material_override.set_shader_parameter("rotation", rads)
-	$leaves_3.material_override.set_shader_parameter("rotation", rads)
+	$leaves_1.material_override.set_shader_parameter("rotation", rads - rotation.y)
+	$leaves_2.material_override.set_shader_parameter("rotation", rads - rotation.y)
+	$leaves_3.material_override.set_shader_parameter("rotation", rads - rotation.y)
 
 
 func set_wind_strength(value: float, min: float, max: float):
@@ -61,13 +83,14 @@ func set_wind_strength(value: float, min: float, max: float):
 	$leaves_2.material_override.set_shader_parameter(
 		"sway_amplitude", Utils.remap(value, min, max, 0.03, 0.10))
 	$leaves_3.material_override.set_shader_parameter(
-		"sway_amplitude", Utils.remap(value, min, max, 0.05, 0.13))
+		"sway_amplitude", Utils.remap(value, min, max, 0.05, 0.15))
 
 
 func set_low_lod() -> void:
 	$leaves_2.transparency = 0.0
 	$leaves_3.transparency = 0.0
 	$dirt.transparency = 0.0
+	$leaves_1.cast_shadow = false
 	$leaves_2.cast_shadow = false
 	$leaves_3.cast_shadow = false
 	var tween_1 = get_tree().create_tween()

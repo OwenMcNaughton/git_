@@ -45,7 +45,7 @@ material_override = ExtResource("4_pu8qs")
 mesh = SubResource("QuadMesh_2r22m")
 
 [node name="dirt" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0.01, 0)
 material_override = SubResource("StandardMaterial3D_n50k6")
 mesh = SubResource("QuadMesh_fpscx")
 
