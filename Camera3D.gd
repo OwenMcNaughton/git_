@@ -2,7 +2,7 @@ extends Camera3D
 
 var zoom_speed: float = .05
 @export var min_zoom: float = 1
-@export var max_zoom: float = 200
+@export var max_zoom: float = 500
 var friction: float = 0.9
 var zoom_velocity: float = 0.0
 var position_velocity: Vector3 = Vector3()
@@ -19,6 +19,28 @@ func _input(event: InputEvent) -> void:
 			is_panning = event.pressed
 	elif event is InputEventMouseMotion and is_panning:
 		_handle_pan(event)
+	elif event is InputEventKey:
+		var k = event.as_text_keycode()
+		match k:
+			"Z": manual_zoom(5)
+			"X": manual_zoom(20)
+			"C": manual_zoom(50)
+			"V": manual_zoom(100)
+			"B": manual_zoom(200)
+			"N": manual_zoom(500)
+			
+
+func manual_zoom(new_zoom: float) -> void:
+	var old_size = size
+	size = new_zoom
+	get_parent().set_cam_size(size)
+	if old_size < 40 and size > 40:
+		for tree in get_tree().get_nodes_in_group("trees"):
+			tree.set_low_lod()
+	if old_size > 40 and size < 40:
+		for tree in get_tree().get_nodes_in_group("trees"):
+			tree.set_high_lod()
+
 
 
 func _handle_zoom(event: InputEvent) -> void:

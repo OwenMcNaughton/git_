@@ -36,7 +36,7 @@ far = 20.0
 script = ExtResource("2_44nmr")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0)
+transform = Transform3D(256, 0, 0, 0, 256, 0, 0, 0, 256, 0, 0, 0)
 material_override = SubResource("StandardMaterial3D_esbki")
 mesh = SubResource("PlaneMesh_2byye")
 
@@ -67,6 +67,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="Control"]
+position = Vector2(375, 216)
 
 [node name="fps" type="Label" parent="Control"]
 layout_mode = 1
