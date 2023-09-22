@@ -1,11 +1,15 @@
-[gd_scene load_steps=11 format=3 uid="uid://b0fq5ymm1atea"]
+[gd_scene load_steps=13 format=3 uid="uid://b0fq5ymm1atea"]
 
-[ext_resource type="PackedScene" uid="uid://cdv3xe7xjjpyx" path="res://tree.tscn" id="1_xohk6"]
+[ext_resource type="Script" path="res://main.gd" id="1_8vsfp"]
+[ext_resource type="Script" path="res://tree_manager.gd" id="1_vrdr0"]
 [ext_resource type="Script" path="res://Camera3D.gd" id="2_44nmr"]
 [ext_resource type="Script" path="res://slider.gd" id="2_cnslh"]
 [ext_resource type="Script" path="res://DirectionalLight3D.gd" id="2_vomk3"]
 [ext_resource type="Script" path="res://cursor.gd" id="3_yuqjj"]
 [ext_resource type="Texture2D" uid="uid://dxnnun5few3e2" path="res://arrow.png" id="6_070y1"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_esbki"]
+albedo_color = Color(0.619608, 0.0313726, 0.0980392, 1)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_2byye"]
 
@@ -19,21 +23,21 @@ albedo_color = Color(1, 0, 0.247059, 1)
 size = Vector3(0.02, 0.02, 0.02)
 
 [node name="Main" type="Node3D"]
+script = ExtResource("1_8vsfp")
 
-[node name="tree" parent="." instance=ExtResource("1_xohk6")]
-
-[node name="tree2" parent="." instance=ExtResource("1_xohk6")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -92.5265, 0, 90.8889)
+[node name="trees" type="Node3D" parent="."]
+script = ExtResource("1_vrdr0")
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 5, 0)
 projection = 1
-size = 2.0
-far = 21.19
+size = 100.0
+far = 20.0
 script = ExtResource("2_44nmr")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(100, 0, 0, 0, 100, 0, 0, 0, 100, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_esbki")
 mesh = SubResource("PlaneMesh_2byye")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
@@ -63,6 +67,27 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="fps" type="Label" parent="Control"]
+layout_mode = 1
+offset_right = 40.0
+offset_bottom = 23.0
+text = "FPS"
+
+[node name="trees" type="Label" parent="Control"]
+layout_mode = 0
+offset_left = 1.0
+offset_top = 28.0
+offset_right = 41.0
+offset_bottom = 51.0
+text = "trees: "
+
+[node name="cam_size" type="Label" parent="Control"]
+layout_mode = 0
+offset_top = 56.0
+offset_right = 48.0
+offset_bottom = 82.0
+text = "trees: "
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Control"]
 custom_minimum_size = Vector2(400, 150)
@@ -153,7 +178,7 @@ exp_edit = true
 [connection signal="value_changed" from="Control/VBoxContainer/sunrot_x/HSlider" to="Control/VBoxContainer/sunrot_x" method="_on_value_changed"]
 [connection signal="value_changed" from="Control/VBoxContainer/sunrot_y/HSlider" to="DirectionalLight3D" method="_on_y_changed"]
 [connection signal="value_changed" from="Control/VBoxContainer/sunrot_y/HSlider" to="Control/VBoxContainer/sunrot_y" method="_on_value_changed"]
-[connection signal="value_changed" from="Control/VBoxContainer/wind_rot/HSlider" to="Control/VBoxContainer/wind_rot" method="_on_wind_rot_changed"]
 [connection signal="value_changed" from="Control/VBoxContainer/wind_rot/HSlider" to="Control/VBoxContainer/wind_rot" method="_on_arrow_changed"]
+[connection signal="value_changed" from="Control/VBoxContainer/wind_rot/HSlider" to="Control/VBoxContainer/wind_rot" method="_on_wind_rot_changed"]
 [connection signal="value_changed" from="Control/VBoxContainer/wind_strength/HSlider" to="Control/VBoxContainer/wind_strength" method="_on_value_changed"]
 [connection signal="value_changed" from="Control/VBoxContainer/wind_strength/HSlider" to="Control/VBoxContainer/wind_strength" method="_onwind_strength_changed"]

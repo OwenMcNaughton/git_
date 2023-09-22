@@ -10,7 +10,7 @@ uniform vec4 albedo : source_color;
 uniform sampler2D image_texture;
 uniform float alpha_threshold = 0.01;
 
-uniform vec2 noise_speed = vec2(0.5, 0.5);
+uniform vec2 noise_speed = vec2(0.25, 0.0);
 uniform float noise_scale = 0.02;
 
 uniform float sway_frequency: hint_range(0.2, 2) = 1.0;
@@ -35,8 +35,7 @@ vec2 scaleUV(vec2 uv) {
 }
 
 vec3 make_turbulence(vec2 uv, float gradient_value) {
-	vec2 noise_speed2 = rotate(noise_speed, rotation);
-	vec2 ns = uv + noise_speed2 * (TIME * time_offset) * time_factor;
+	vec2 ns = uv + noise_speed * (TIME * time_offset) * time_factor;
 	float noise_value = texture(noise_texture, ns).r * 2.0 - 1.0;
     return vec3(
 		noise_value * gradient_value * noise_scale,

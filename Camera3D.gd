@@ -1,7 +1,7 @@
 extends Camera3D
 
 var zoom_speed: float = .05
-@export var min_zoom: float = 2
+@export var min_zoom: float = 1
 @export var max_zoom: float = 200
 var friction: float = 0.9
 var zoom_velocity: float = 0.0
@@ -28,7 +28,6 @@ func _handle_zoom(event: InputEvent) -> void:
 	
 	var scaled_zoom_speed = zoom_speed * (1.0 + log(size) * 2)
 	
-	
 	var x_translate = rel_mouse_pos.x * scaled_zoom_speed * viewport_size.x / viewport_size.y
 	var y_translate = rel_mouse_pos.y * scaled_zoom_speed
 
@@ -46,9 +45,16 @@ func _handle_zoom(event: InputEvent) -> void:
 
 func _process(delta: float) -> void:
 	var old_size = size
-	
 	size += zoom_velocity
 	size = clamp(size, min_zoom, max_zoom)
+
+	get_parent().set_cam_size(size)
+	if old_size < 40 and size > 40:
+		for tree in get_tree().get_nodes_in_group("trees"):
+			tree.set_low_lod()
+	if old_size > 40 and size < 40:
+		for tree in get_tree().get_nodes_in_group("trees"):
+			tree.set_high_lod()
 	
 	var zoom_fraction = (size - old_size) / zoom_velocity if zoom_velocity != 0 else 1
 	
