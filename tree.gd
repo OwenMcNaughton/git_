@@ -1,7 +1,16 @@
 extends Node3D
 
 
-var _area: Area3D = null
+class_name OakTree
+
+
+var _occluders: Array[Area3D] = []
+var _centers: Array[Vector2] = []
+@onready var collision: CollisionShape3D = $Area3D/CollisionShape3D
+@onready var my_root = get_parent().get_parent().get_parent()
+@onready var l1 = $leaves_1
+@onready var l2 = $leaves_2
+@onready var l3 = $leaves_3
 
 
 func _ready() -> void:
@@ -23,13 +32,20 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	if _area != null:
-		var gp = global_position - _area.global_position
-		gp = Vector2(normalize(gp.x), normalize(gp.z))
+	_centers = []
+	for area in _occluders:
+		var gp = global_position - area.global_position
+		var s = collision.shape.size
+		gp = Vector2(
+			Utils.normalize(gp.x, s.x * 0.5, -s.x * 0.5),
+			Utils.normalize(gp.z, s.z * 0.5, -s.z * 0.5)
+		)
 		gp = rotate_around_center(gp, Vector2(0.5, 0.5), rotation.y)
-		$leaves_1.material_override.set_shader_parameter("vignette_center", gp)
-		$leaves_2.material_override.set_shader_parameter("vignette_center", gp)
-		$leaves_3.material_override.set_shader_parameter("vignette_center", gp)
+		_centers.append(gp)
+		my_root.occluders += 1
+	l1.material_override.set_shader_parameter("vignette_centers", _centers)
+	l2.material_override.set_shader_parameter("vignette_centers", _centers)
+	l3.material_override.set_shader_parameter("vignette_centers", _centers)
 
 
 func rotate_around_center(point: Vector2, center: Vector2, angle: float) -> Vector2:
@@ -43,18 +59,12 @@ func rotate_around_center(point: Vector2, center: Vector2, angle: float) -> Vect
 	return point
 
 
-func normalize(value: float) -> float:
-	var min_original: float = $Area3D/CollisionShape3D.shape.size.x * 0.5
-	var max_original: float = -$Area3D/CollisionShape3D.shape.size.x * 0.5
-	return (value - min_original) / (max_original - min_original)
-
-
 func _on_area_3d_area_entered(area: Area3D) -> void:
-	_area = area
+	_occluders.append(area)
 
 
 func _on_area_3d_area_exited(area: Area3D) -> void:
-	_area = null
+	_occluders.erase(area)
 	$leaves_1.material_override.set_shader_parameter("vignette_center", Vector2(100, 100))
 	$leaves_2.material_override.set_shader_parameter("vignette_center", Vector2(100, 100))
 	$leaves_3.material_override.set_shader_parameter("vignette_center", Vector2(100, 100))
@@ -72,11 +82,11 @@ func set_wind_strength(value: float, min: float, max: float):
 	$leaves_3.material_override.set_shader_parameter("time_factor", value)
 	
 	$leaves_1.material_override.set_shader_parameter(
-		"sway_frequency", Utils.remap(value, min, max, 1, 3))
+		"sway_frequency", Utils.remap(value, min, max, 0.1, 3))
 	$leaves_2.material_override.set_shader_parameter(
-		"sway_frequency", Utils.remap(value, min, max, 1, 3))
+		"sway_frequency", Utils.remap(value, min, max, 0.1, 3))
 	$leaves_3.material_override.set_shader_parameter(
-		"sway_frequency", Utils.remap(value, min, max, 1, 3))
+		"sway_frequency", Utils.remap(value, min, max, 0.1, 3))
 
 	$leaves_1.material_override.set_shader_parameter(
 		"sway_amplitude", Utils.remap(value, min, max, 0.01, 0.06))

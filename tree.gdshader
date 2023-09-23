@@ -1,9 +1,9 @@
 shader_type spatial;
 render_mode blend_mix;
 
-
-uniform float radius = 0.1;
-uniform vec2 vignette_center;
+const int NUM_VIGNETTES = 5;
+uniform float vignette_radius = 0.1;
+uniform vec2 vignette_centers[NUM_VIGNETTES];
 
 uniform vec4 albedo : source_color;
 uniform sampler2D image_texture;
@@ -70,11 +70,15 @@ void vertex() {
 //}
 
 void fragment() {
-	float dist = length(fract(UV) - vignette_center);
- 	float vignette = smoothstep(radius, radius + 0.4, dist);
+    float combined_vignette = 1.0;
+    for (int i = 0; i < NUM_VIGNETTES; i++) {
+		float dist = length(fract(UV) - vignette_centers[i]);
+	 	float vignette = smoothstep(vignette_radius, vignette_radius + 0.4, dist);
+		combined_vignette *= vignette;
+	}
 
 	vec4 albedo_tex = texture(image_texture, UV);
-	vec4 vignetted = mix(vec4(0.0, 0.0, 0.0, 0.0), albedo_tex.rgba, vignette);
+	vec4 vignetted = mix(vec4(0.0, 0.0, 0.0, 0.0), albedo_tex.rgba, combined_vignette);
 	ALBEDO = vignetted.rgb;
 	if (vignetted.a  * albedo_tex.a < alpha_threshold) {
 		discard;
