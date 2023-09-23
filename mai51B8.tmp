@@ -195,7 +195,7 @@ exp_edit = true
 
 [node name="tree_graphics_options" type="OptionButton" parent="Control/VBoxContainer"]
 layout_mode = 2
-item_count = 5
+item_count = 3
 selected = 0
 popup/item_0/text = "original"
 popup/item_0/id = 0
@@ -203,10 +203,6 @@ popup/item_1/text = "speed_tree"
 popup/item_1/id = 1
 popup/item_2/text = "speed_tree_expanded"
 popup/item_2/id = 2
-popup/item_3/text = "speed_tree_grayscale"
-popup/item_3/id = 3
-popup/item_4/text = "speed_tree_greenscale"
-popup/item_4/id = 4
 script = ExtResource("8_8hgol")
 
 [connection signal="bake_finished" from="NavigationRegion3D" to="." method="_on_navigation_region_3d_bake_finished"]

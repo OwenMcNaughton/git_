@@ -12,8 +12,26 @@ var _centers: Array[Vector2] = []
 @onready var l2 = $leaves_2
 @onready var l3 = $leaves_3
 
+var bot_a = preload("res://tree_big.png")
+var mid_a = preload("res://tree_small.png")
+var top_a = preload("res://tree_tiny.png")
+var bot_b = preload("res://bot_b.png")
+var mid_b = preload("res://mid_b.png")
+var top_b = preload("res://top_b.png")
+var bot_c = preload("res://bot_c.png")
+var mid_c = preload("res://mid_c.png")
+var top_c = preload("res://top_c.png")
+var bot_d = preload("res://bot_d.png")
+var mid_d = preload("res://mid_d.png")
+var top_d = preload("res://top_d.png")
+var bot_e = preload("res://bot_e.png")
+var mid_e = preload("res://mid_e.png")
+var top_e = preload("res://top_e.png")
+
 
 func _ready() -> void:
+	set_graphics("original")
+	
 	$leaves_1.material_override = $leaves_1.material_override.duplicate()
 	$leaves_2.material_override = $leaves_2.material_override.duplicate()
 	$leaves_3.material_override = $leaves_3.material_override.duplicate()
@@ -23,7 +41,7 @@ func _ready() -> void:
 	$leaves_2.material_override.set_shader_parameter("rotation", 90 - rotation.y)
 	$leaves_3.material_override.set_shader_parameter("rotation", 90 - rotation.y)
 	
-	var to = Utils.randf_range(0.8, 1.2)
+	var to = Utils.randf_range(0.1, 1.9)
 	$leaves_1.material_override.set_shader_parameter("time_offset", to)
 	$leaves_2.material_override.set_shader_parameter("time_offset", to) 
 	$leaves_3.material_override.set_shader_parameter("time_offset", to)
@@ -136,5 +154,30 @@ func set_invisible() -> void:
 
 
 func set_shadow_on() -> void:
+	$leaves_1.cast_shadow = true
 	$leaves_2.cast_shadow = true
 	$leaves_3.cast_shadow = true
+
+
+func set_graphics(option: String):
+	match option:
+		"original": 
+			$leaves_1.material_override.set_shader_parameter("image_texture", bot_a)
+			$leaves_2.material_override.set_shader_parameter("image_texture", mid_a)
+			$leaves_3.material_override.set_shader_parameter("image_texture", top_a)
+		"speed_tree": 
+			$leaves_1.material_override.set_shader_parameter("image_texture", bot_b)
+			$leaves_2.material_override.set_shader_parameter("image_texture", mid_b)
+			$leaves_3.material_override.set_shader_parameter("image_texture", top_b)
+		"speed_tree_expanded": 
+			$leaves_1.material_override.set_shader_parameter("image_texture", bot_c)
+			$leaves_2.material_override.set_shader_parameter("image_texture", mid_c)
+			$leaves_3.material_override.set_shader_parameter("image_texture", top_c)
+		"speed_tree_grayscale": 
+			$leaves_1.material_override.set_shader_parameter("image_texture", bot_d)
+			$leaves_2.material_override.set_shader_parameter("image_texture", mid_d)
+			$leaves_3.material_override.set_shader_parameter("image_texture", top_d)
+		"speed_tree_greenscale": 
+			$leaves_1.material_override.set_shader_parameter("image_texture", bot_e)
+			$leaves_2.material_override.set_shader_parameter("image_texture", mid_e)
+			$leaves_3.material_override.set_shader_parameter("image_texture", top_e)

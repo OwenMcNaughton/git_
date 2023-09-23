@@ -18,19 +18,20 @@ func set_cam_size(size: float) -> void:
 
 
 func _ready() -> void:
-	for x in range(32):
-		for y in range(32):
+	var max = 64
+	for x in range(max):
+		for y in range(max):
 			var spawn_loc: Vector3 = Vector3(
-				Utils.remap(x, 0, 32, -16, 16), 
+				Utils.remap(x, 0, max, -32, 32), 
 				0, 
-				Utils.remap(y, 0, 32, -16, 16)
+				Utils.remap(y, 0, max, -32, 32)
 			)
 			$NavigationRegion3D/trees.add_tree(spawn_loc)
 	$NavigationRegion3D.bake_navigation_mesh()
 
 
 func _on_navigation_region_3d_bake_finished() -> void:
-	for _i in range(2000):
+	for _i in range(1000):
 		var agent = agent_scene.instantiate()
 		agent.position = Vector3(Utils.randf_range(-10, 10), .1, Utils.randf_range(-10, 10))
 		agent.activated = true

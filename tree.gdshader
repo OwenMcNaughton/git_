@@ -35,7 +35,7 @@ vec2 scaleUV(vec2 uv) {
 }
 
 vec3 make_turbulence(vec2 uv, float gradient_value) {
-	vec2 ns = uv + noise_speed * (TIME * time_offset) * time_factor;
+	vec2 ns = uv + noise_speed * (TIME + time_offset) * time_factor;
 	float noise_value = texture(noise_texture, ns).r * 2.0 - 1.0;
     return vec3(
 		noise_value * gradient_value * noise_scale,
@@ -70,9 +70,14 @@ void vertex() {
 //}
 
 void fragment() {
+	vec2 rotatedUV = rotate(UV - vec2(0.5, 0.5), rotation) + vec2(0.5, 0.5);
+	vec2 scaledUV = scaleUV(rotatedUV);
+	vec3 sw = make_sway(scaledUV);
+	vec2 s2 = vec2(-sw.x, sw.y);
+	
     float combined_vignette = 1.0;
     for (int i = 0; i < NUM_VIGNETTES; i++) {
-		float dist = length(fract(UV) - vignette_centers[i]);
+		float dist = length(fract(UV) - vignette_centers[i] - s2);
 	 	float vignette = smoothstep(vignette_radius, vignette_radius + 0.4, dist);
 		combined_vignette *= vignette;
 	}
