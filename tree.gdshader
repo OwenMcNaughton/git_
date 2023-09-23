@@ -5,6 +5,8 @@ const int NUM_VIGNETTES = 5;
 uniform float vignette_radius = 0.1;
 uniform vec2 vignette_centers[NUM_VIGNETTES];
 
+uniform bool wire_on = false;
+
 uniform vec4 albedo : source_color;
 uniform sampler2D image_texture;
 uniform float alpha_threshold = 0.01;
@@ -44,7 +46,7 @@ vec3 make_turbulence(vec2 uv, float gradient_value) {
 	);
 }
 
-vec3 make_sway(vec2 uv) {
+vec3 make_sway() {
     float sway_value = sin((TIME + time_offset) * sway_frequency) * sway_amplitude;
     return vec3(
 		sin(-rotation + 3.14 / 2.0) * sway_value,
@@ -53,12 +55,20 @@ vec3 make_sway(vec2 uv) {
 	);
 }
 
+vec3 perm_sway() {
+    return vec3(
+		sin(-rotation + 3.14 / 2.0) * sway_amplitude / 1.5,
+		cos(-rotation + 3.14 / 2.0) * sway_amplitude / 1.5,
+		0
+	);	
+}
+
 void vertex() {
 	vec2 rotatedUV = rotate(UV - vec2(0.5, 0.5), rotation) + vec2(0.5, 0.5);
 	vec2 scaledUV = scaleUV(rotatedUV);
 	float gradient_value = texture(gradient_texture, scaledUV).r;
 	
-	VERTEX += make_turbulence(scaledUV, gradient_value) + make_sway(scaledUV);
+	VERTEX += make_turbulence(scaledUV, gradient_value) + make_sway() - perm_sway();
 }
 
 //void fragment() {
@@ -70,9 +80,7 @@ void vertex() {
 //}
 
 void fragment() {
-	vec2 rotatedUV = rotate(UV - vec2(0.5, 0.5), rotation) + vec2(0.5, 0.5);
-	vec2 scaledUV = scaleUV(rotatedUV);
-	vec3 sw = make_sway(scaledUV);
+	vec3 sw = make_sway() - perm_sway();
 	vec2 s2 = vec2(-sw.x, sw.y);
 	
     float combined_vignette = 1.0;

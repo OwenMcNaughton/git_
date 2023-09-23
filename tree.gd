@@ -6,6 +6,7 @@ class_name OakTree
 
 var _occluders: Array[Area3D] = []
 var _centers: Array[Vector2] = []
+var _last_center_size: int = 0
 @onready var collision: CollisionShape3D = $Area3D/CollisionShape3D
 @onready var my_root = get_parent().get_parent().get_parent()
 @onready var l1 = $leaves_1
@@ -44,19 +45,24 @@ var fou_c = preload("res://4c.png")
 func _ready() -> void:
 	set_graphics("dynamic")
 	
-	$leaves_1.material_override = $leaves_1.material_override.duplicate()
-	$leaves_2.material_override = $leaves_2.material_override.duplicate()
-	$leaves_3.material_override = $leaves_3.material_override.duplicate()
-	set_low_lod()
+	l1.material_override = l1.material_override.duplicate()
+	l2.material_override = l2.material_override.duplicate()
+	l3.material_override = l3.material_override.duplicate()
+	set_high_lod()
 	
-	$leaves_1.material_override.set_shader_parameter("rotation", 90 - rotation.y)
-	$leaves_2.material_override.set_shader_parameter("rotation", 90 - rotation.y)
-	$leaves_3.material_override.set_shader_parameter("rotation", 90 - rotation.y)
+	l1.material_override.set_shader_parameter("rotation", 90 - rotation.y)
+	l2.material_override.set_shader_parameter("rotation", 90 - rotation.y)
+	l3.material_override.set_shader_parameter("rotation", 90 - rotation.y)
 	
-	var to = Utils.randf_range(0.1, 1.9)
-	$leaves_1.material_override.set_shader_parameter("time_offset", to)
-	$leaves_2.material_override.set_shader_parameter("time_offset", to) 
-	$leaves_3.material_override.set_shader_parameter("time_offset", to)
+	var to = Utils.randf_range(0.8, 1.2)
+	l1.material_override.set_shader_parameter("time_offset", to)
+	l2.material_override.set_shader_parameter("time_offset", to) 
+	l3.material_override.set_shader_parameter("time_offset", to)
+
+	var dv = dummy_vignettes()
+	l1.material_override.set_shader_parameter("vignette_centers", dv)
+	l2.material_override.set_shader_parameter("vignette_centers", dv)
+	l3.material_override.set_shader_parameter("vignette_centers", dv)
 	
 	add_to_group("trees")
 
@@ -77,6 +83,14 @@ func _process(delta: float) -> void:
 		l1.material_override.set_shader_parameter("vignette_centers", _centers)
 		l2.material_override.set_shader_parameter("vignette_centers", _centers)
 		l3.material_override.set_shader_parameter("vignette_centers", _centers)
+		_last_center_size = _centers.size()
+	else:
+		if _last_center_size != 0:
+			var dv = dummy_vignettes()
+			l1.material_override.set_shader_parameter("vignette_centers", dv)
+			l2.material_override.set_shader_parameter("vignette_centers", dv)
+			l3.material_override.set_shader_parameter("vignette_centers", dv)
+		_last_center_size = 0
 
 
 func rotate_around_center(point: Vector2, center: Vector2, angle: float) -> Vector2:
@@ -90,6 +104,13 @@ func rotate_around_center(point: Vector2, center: Vector2, angle: float) -> Vect
 	return point
 
 
+func dummy_vignettes():
+	var v = []
+	for _i in range(5):
+		v.append(Vector2(100, 100))
+	return v
+
+
 func _on_area_3d_area_entered(area: Area3D) -> void:
 	_occluders.append(area)
 
@@ -99,113 +120,156 @@ func _on_area_3d_area_exited(area: Area3D) -> void:
 
 
 func set_wind_rot(rads: float):
-	$leaves_1.material_override.set_shader_parameter("rotation", rads - rotation.y)
-	$leaves_2.material_override.set_shader_parameter("rotation", rads - rotation.y)
-	$leaves_3.material_override.set_shader_parameter("rotation", rads - rotation.y)
+	l1.material_override.set_shader_parameter("rotation", rads - rotation.y)
+	l2.material_override.set_shader_parameter("rotation", rads - rotation.y)
+	l3.material_override.set_shader_parameter("rotation", rads - rotation.y)
 
 
 func set_wind_strength(value: float, min: float, max: float):
-	$leaves_1.material_override.set_shader_parameter("time_factor", value)
-	$leaves_2.material_override.set_shader_parameter("time_factor", value)
-	$leaves_3.material_override.set_shader_parameter("time_factor", value)
+	l1.material_override.set_shader_parameter("time_factor", value)
+	l2.material_override.set_shader_parameter("time_factor", value)
+	l3.material_override.set_shader_parameter("time_factor", value)
 	
-	$leaves_1.material_override.set_shader_parameter(
+	l1.material_override.set_shader_parameter(
 		"sway_frequency", Utils.remap(value, min, max, 0.1, 3))
-	$leaves_2.material_override.set_shader_parameter(
+	l2.material_override.set_shader_parameter(
 		"sway_frequency", Utils.remap(value, min, max, 0.1, 3))
-	$leaves_3.material_override.set_shader_parameter(
+	l3.material_override.set_shader_parameter(
 		"sway_frequency", Utils.remap(value, min, max, 0.1, 3))
-
-	$leaves_1.material_override.set_shader_parameter(
-		"sway_amplitude", Utils.remap(value, min, max, 0.01, 0.06))
-	$leaves_2.material_override.set_shader_parameter(
-		"sway_amplitude", Utils.remap(value, min, max, 0.03, 0.10))
-	$leaves_3.material_override.set_shader_parameter(
-		"sway_amplitude", Utils.remap(value, min, max, 0.05, 0.15))
+		
+	l1.material_override.set_shader_parameter(
+		"sway_amplitude", Utils.remap(value, min, max, 0.03, 0.09))
+	l2.material_override.set_shader_parameter(
+		"sway_amplitude", Utils.remap(value, min, max, 0.06, 0.15))
+	l3.material_override.set_shader_parameter(
+		"sway_amplitude", Utils.remap(value, min, max, 0.09, 0.21))
 
 
 func set_low_lod() -> void:
-	$leaves_2.transparency = 0.0
-	$leaves_3.transparency = 0.0
-	$dirt.transparency = 0.0
-	$leaves_1.cast_shadow = false
-	$leaves_2.cast_shadow = false
-	$leaves_3.cast_shadow = false
+	l1.transparency = 0.0
+	l1.cast_shadow = false
+	$greendot.visible = true
+	$greendot.transparency = 1.0
+	$greendot.cast_shadow = false
 	var tween_1 = get_tree().create_tween()
-	tween_1.tween_property($leaves_2, "transparency", 1.0, 0.2)
+	tween_1.tween_property($leaves_1, "transparency", 1.0, 0.25)
 	var tween_2 = get_tree().create_tween()
-	tween_2.tween_property($leaves_3, "transparency", 1.0, 0.2)
+	tween_2.tween_property($greendot, "transparency", 0.0, 0.25)
+	tween_2.tween_callback(set_all_invisible)
+	$greendot.rotation.y = -rotation.y
+
+
+func set_mid_from_high_lod() -> void:
+	l2.transparency = 0.0
+	l3.transparency = 0.0
+	$dirt.transparency = 0.0
+	l1.cast_shadow = false
+	l2.cast_shadow = false
+	l3.cast_shadow = false
+	var tween_1 = get_tree().create_tween()
+	tween_1.tween_property(l2, "transparency", 1.0, 0.25)
+	var tween_2 = get_tree().create_tween()
+	tween_2.tween_property(l3, "transparency", 1.0, 0.25)
 	var tween_3 = get_tree().create_tween()
-	tween_3.tween_property($dirt, "transparency", 1.0, 0.2)
+	tween_3.tween_property($dirt, "transparency", 1.0, 0.25)
+	tween_3.tween_callback(set_invisible)
+	$greendot.visible = false
+
+
+func set_mid_from_low_lod() -> void:
+	l1.transparency = 1.0
+	l1.visible = true
+	var tween_1 = get_tree().create_tween()
+	tween_1.tween_property(l1, "transparency", 0.0, 0.25)
+	tween_1.tween_callback(set_mid_from_low_callback)
+	$greendot.visible = false
 
 
 func set_high_lod() -> void:
-	$leaves_2.transparency = 1.0
-	$leaves_3.transparency = 1.0
+	l2.transparency = 1.0
+	l3.transparency = 1.0
 	$dirt.transparency = 1.0
-	$leaves_2.visible = true
-	$leaves_3.visible = true
+	l2.visible = true
+	l3.visible = true
 	$dirt.visible = true
-	$leaves_2.cast_shadow = false
-	$leaves_3.cast_shadow = false
+	l2.cast_shadow = false
+	l3.cast_shadow = false
 	var tween_1 = get_tree().create_tween()
-	tween_1.tween_property($leaves_2, "transparency", 0.0, 0.2)
+	tween_1.tween_property(l2, "transparency", 0.0, 0.25)
 	var tween_2 = get_tree().create_tween()
-	tween_2.tween_property($leaves_3, "transparency", 0.0, 0.2)
+	tween_2.tween_property(l3, "transparency", 0.0, 0.25)
 	var tween_3 = get_tree().create_tween()
-	tween_3.tween_property($dirt, "transparency", 0.0, 0.2)
+	tween_3.tween_property($dirt, "transparency", 0.0, 0.25)
 	tween_3.tween_callback(set_shadow_on)
+	$greendot.visible = false
+
+
+func set_mid_from_low_callback() -> void:
+	$greendot.visible = false
+
+
+func set_all_invisible() -> void:
+	$leaves_1.visible = false
 
 
 func set_invisible() -> void:
-	$leaves_2.visible = false
-	$leaves_3.visible = false
+	l2.visible = false
+	l3.visible = false
 	$dirt.visible = false
 
 
 func set_shadow_on() -> void:
-	$leaves_1.cast_shadow = true
-	$leaves_2.cast_shadow = true
-	$leaves_3.cast_shadow = true
+	l1.cast_shadow = true
+	l2.cast_shadow = true
+	l3.cast_shadow = true
 
 
 func set_graphics(option: String):
+#	if option != "wireframe":
+#		$leaves_1.material_override.set_shader_parameter("wire_on", false)
+#		$leaves_2.material_override.set_shader_parameter("wire_on", false)
+#		$leaves_3.material_override.set_shader_parameter("wire_on", false)
+		
 	match option:
 		"original": 
-			$leaves_1.material_override.set_shader_parameter("image_texture", bot_a)
+			l1.material_override.set_shader_parameter("image_texture", bot_a)
 			$leaves_2.material_override.set_shader_parameter("image_texture", mid_a)
-			$leaves_3.material_override.set_shader_parameter("image_texture", top_a)
+			l3.material_override.set_shader_parameter("image_texture", top_a)
 		"speed_tree": 
-			$leaves_1.material_override.set_shader_parameter("image_texture", bot_b)
-			$leaves_2.material_override.set_shader_parameter("image_texture", mid_b)
-			$leaves_3.material_override.set_shader_parameter("image_texture", top_b)
+			l1.material_override.set_shader_parameter("image_texture", bot_b)
+			l2.material_override.set_shader_parameter("image_texture", mid_b)
+			l3.material_override.set_shader_parameter("image_texture", top_b)
 		"speed_tree_expanded": 
-			$leaves_1.material_override.set_shader_parameter("image_texture", bot_c)
-			$leaves_2.material_override.set_shader_parameter("image_texture", mid_c)
-			$leaves_3.material_override.set_shader_parameter("image_texture", top_c)
+			l1.material_override.set_shader_parameter("image_texture", bot_c)
+			l2.material_override.set_shader_parameter("image_texture", mid_c)
+			l3.material_override.set_shader_parameter("image_texture", top_c)
 		"speed_tree_grayscale": 
-			$leaves_1.material_override.set_shader_parameter("image_texture", bot_d)
-			$leaves_2.material_override.set_shader_parameter("image_texture", mid_d)
-			$leaves_3.material_override.set_shader_parameter("image_texture", top_d)
+			l1.material_override.set_shader_parameter("image_texture", bot_d)
+			l2.material_override.set_shader_parameter("image_texture", mid_d)
+			l3.material_override.set_shader_parameter("image_texture", top_d)
 		"speed_tree_greenscale": 
-			$leaves_1.material_override.set_shader_parameter("image_texture", bot_e)
-			$leaves_2.material_override.set_shader_parameter("image_texture", mid_e)
-			$leaves_3.material_override.set_shader_parameter("image_texture", top_e)
+			l1.material_override.set_shader_parameter("image_texture", bot_e)
+			l2.material_override.set_shader_parameter("image_texture", mid_e)
+			l3.material_override.set_shader_parameter("image_texture", top_e)
+#		"wireframe": 
+#			l1.material_override.set_shader_parameter("wire_on", true)
+#			l2.material_override.set_shader_parameter("wire_on", true)
+#			l3.material_override.set_shader_parameter("wire_on", true)
 		"dynamic":
 			match randi() % 4:
 				0:
-					$leaves_1.material_override.set_shader_parameter("image_texture", one_a)
-					$leaves_2.material_override.set_shader_parameter("image_texture", one_b)
-					$leaves_3.material_override.set_shader_parameter("image_texture", one_c)
+					l1.material_override.set_shader_parameter("image_texture", one_a)
+					l2.material_override.set_shader_parameter("image_texture", one_b)
+					l3.material_override.set_shader_parameter("image_texture", one_c)
 				1:
-					$leaves_1.material_override.set_shader_parameter("image_texture", two_a)
-					$leaves_2.material_override.set_shader_parameter("image_texture", two_b)
-					$leaves_3.material_override.set_shader_parameter("image_texture", two_c)
+					l1.material_override.set_shader_parameter("image_texture", two_a)
+					l2.material_override.set_shader_parameter("image_texture", two_b)
+					l3.material_override.set_shader_parameter("image_texture", two_c)
 				2:
-					$leaves_1.material_override.set_shader_parameter("image_texture", thr_a)
-					$leaves_2.material_override.set_shader_parameter("image_texture", thr_b)
-					$leaves_3.material_override.set_shader_parameter("image_texture", thr_c)
+					l1.material_override.set_shader_parameter("image_texture", thr_a)
+					l2.material_override.set_shader_parameter("image_texture", thr_b)
+					l3.material_override.set_shader_parameter("image_texture", thr_c)
 				3:
-					$leaves_1.material_override.set_shader_parameter("image_texture", fou_a)
-					$leaves_2.material_override.set_shader_parameter("image_texture", fou_b)
-					$leaves_3.material_override.set_shader_parameter("image_texture", fou_c)
+					l1.material_override.set_shader_parameter("image_texture", fou_a)
+					l2.material_override.set_shader_parameter("image_texture", fou_b)
+					l3.material_override.set_shader_parameter("image_texture", fou_c)

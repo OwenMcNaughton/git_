@@ -1,9 +1,9 @@
 extends Camera3D
 
-var zoom_speed: float = .05
+@export var zoom_speed: float = .05
 @export var min_zoom: float = 1
 @export var max_zoom: float = 500
-var friction: float = 0.9
+@export var friction: float = 0.9
 var zoom_velocity: float = 0.0
 var position_velocity: Vector3 = Vector3()
 
@@ -71,12 +71,22 @@ func _process(delta: float) -> void:
 	size = clamp(size, min_zoom, max_zoom)
 
 	get_parent().set_cam_size(size)
-	if old_size < 40 and size > 40:
+	if old_size < 20 and size > 20:
+		print("MID")
 		for tree in get_tree().get_nodes_in_group("trees"):
-			tree.set_low_lod()
+			tree.set_mid_from_high_lod()
 	if old_size > 40 and size < 40:
+		print("MID")
+		for tree in get_tree().get_nodes_in_group("trees"):
+			tree.set_mid_from_low_lod()
+	if old_size > 20 and size < 20:
+		print("HIGH")
 		for tree in get_tree().get_nodes_in_group("trees"):
 			tree.set_high_lod()
+	if old_size < 40 and size > 40:
+		print("LOW")
+		for tree in get_tree().get_nodes_in_group("trees"):
+			tree.set_low_lod()
 	
 	var zoom_fraction = (size - old_size) / zoom_velocity if zoom_velocity != 0 else 1
 	

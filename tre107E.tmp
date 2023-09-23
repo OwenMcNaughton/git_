@@ -5,7 +5,7 @@
 [ext_resource type="Material" uid="uid://7w65awy1hqfc" path="res://leaves_2.tres" id="3_5a1av"]
 [ext_resource type="Material" uid="uid://dg8d127fju84t" path="res://leaves_3.tres" id="4_pu8qs"]
 [ext_resource type="Texture2D" uid="uid://v6l5eli1b754" path="res://tree_dirt.png" id="5_jtbqq"]
-[ext_resource type="Texture2D" uid="uid://c5x177oe2jabf" path="res://greendot.png" id="6_boeln"]
+[ext_resource type="Texture2D" uid="uid://ctav6jqf2y88q" path="res://green_dot.png" id="6_2x6np"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_uj2u5"]
 
@@ -59,11 +59,10 @@ transparency = 1.0
 cast_shadow = 0
 mesh = SubResource("BoxMesh_b76i4")
 
-[node name="greendot" type="Sprite3D" parent="."]
-transform = Transform3D(2.5, 0, 0, 0, -1.09278e-07, 2.5, 0, -2.5, -1.09278e-07, 0, 1.2, 0)
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 1.2, 0)
 visible = false
-cast_shadow = 0
-texture = ExtResource("6_boeln")
+texture = ExtResource("6_2x6np")
 
 [connection signal="area_entered" from="Area3D" to="." method="_on_area_3d_area_entered"]
 [connection signal="area_exited" from="Area3D" to="." method="_on_area_3d_area_exited"]

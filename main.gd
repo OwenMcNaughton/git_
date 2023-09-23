@@ -17,16 +17,48 @@ func set_cam_size(size: float) -> void:
 	$Control/cam_size.text = "CAM SIZE: %s" % round(size)
 
 
+func round_to_dec(num, digit):
+	return round(num * pow(10.0, digit)) / pow(10.0, digit)
+
+
 func _ready() -> void:
-	var max = 34
+	var texture = NoiseTexture2D.new()
+	texture.noise = FastNoiseLite.new()
+	await texture.changed
+	var image = texture.get_image()
+	var data = image.get_data()
+	
+	var all_data = []
+	var tot = 0
+	var f = 512 * 512
+	for x in range(512):
+		for y in range(512):
+			all_data.append(texture.noise.get_noise_2d(x, y))
+			tot += texture.noise.get_noise_2d(x, y)
+	all_data.sort()
+	print("MIN %s " % all_data.min() + ", MAX %s" % all_data.max())
+	print("AVG %s" % round_to_dec(tot / f, 2))
+	
+	var p10 = round_to_dec(all_data[f * 0.10], 2)
+	var p25 = round_to_dec(all_data[f * 0.25], 2)
+	var p50 = round_to_dec(all_data[f * 0.50], 2)
+	var p75 = round_to_dec(all_data[f * 0.75], 2)
+	var p90 = round_to_dec(all_data[f * 0.90], 2)
+	print("p10: %s" % p10 + ", p25: %s" % p25 + ", p50: %s" % p50 + ", p75: %s" % p75 + ", p90: %s" % p90)
+	
+	var max = 100
 	for x in range(max):
 		for y in range(max):
-			var spawn_loc: Vector3 = Vector3(
-				Utils.remap(x, 0, max, -25, 25), 
-				0, 
-				Utils.remap(y, 0, max, -25, 25)
-			)
-			add_tree(spawn_loc)
+			var xx = Utils.remap(x, 0, max, 0, 512)
+			var yy = Utils.remap(y, 0, max, 0, 512)
+			if texture.noise.get_noise_2d(xx, yy) > 0.1:
+				var r = 0.25
+				var spawn_loc: Vector3 = Vector3(
+					Utils.remap(x, 0, max, -36 + randf_range(-r, r), 36 + randf_range(-r, r)), 
+					0, 
+					Utils.remap(y, 0, max, -36 + randf_range(-r, r), 36 + randf_range(-r, r))
+				)
+				add_tree(spawn_loc)
 	$NavigationRegion3D.bake_navigation_mesh()
 
 
@@ -38,9 +70,9 @@ func add_tree(pos: Vector3) -> void:
 
 
 func _on_navigation_region_3d_bake_finished() -> void:
-	for i in range(100):
+	for i in range(1000):
 		var agent = agent_scene.instantiate()
-		agent.position = Vector3(Utils.randf_range(-10, 10), .1, Utils.randf_range(-10, 10))
+		agent.position = Vector3(Utils.randf_range(-10, 10), 111.1, Utils.randf_range(-10, 10))
 		agent.activated = true
 		agent.path.connect(give_agent_path)
 		agent.init(i)
