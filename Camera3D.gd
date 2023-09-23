@@ -17,6 +17,7 @@ func _input(event: InputEvent) -> void:
 			_handle_zoom(event)
 		elif bi == MouseButton.MOUSE_BUTTON_MIDDLE:
 			is_panning = event.pressed
+			zoom_velocity = 0.0
 	elif event is InputEventMouseMotion and is_panning:
 		_handle_pan(event)
 	elif event is InputEventKey:
@@ -40,7 +41,6 @@ func manual_zoom(new_zoom: float) -> void:
 	if old_size > 40 and size < 40:
 		for tree in get_tree().get_nodes_in_group("trees"):
 			tree.set_high_lod()
-
 
 
 func _handle_zoom(event: InputEvent) -> void:

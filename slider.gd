@@ -6,6 +6,7 @@ func _on_value_changed(value: float) -> void:
 
 
 func _on_wind_rot_changed(value: float) -> void:
+	print(get_tree().get_nodes_in_group("trees").size())
 	for tree in get_tree().get_nodes_in_group("trees"):
 		tree.set_wind_rot(-value)
 

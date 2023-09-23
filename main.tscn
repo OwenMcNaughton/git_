@@ -1,7 +1,6 @@
-[gd_scene load_steps=15 format=3 uid="uid://b0fq5ymm1atea"]
+[gd_scene load_steps=14 format=3 uid="uid://b0fq5ymm1atea"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_8vsfp"]
-[ext_resource type="Script" path="res://tree_manager.gd" id="1_vrdr0"]
 [ext_resource type="Script" path="res://Camera3D.gd" id="2_44nmr"]
 [ext_resource type="Script" path="res://slider.gd" id="2_cnslh"]
 [ext_resource type="Script" path="res://DirectionalLight3D.gd" id="2_vomk3"]
@@ -41,7 +40,6 @@ mesh = SubResource("PlaneMesh_2byye")
 skeleton = NodePath("../..")
 
 [node name="trees" type="Node3D" parent="NavigationRegion3D"]
-script = ExtResource("1_vrdr0")
 
 [node name="agents" type="Node3D" parent="."]
 
@@ -195,7 +193,7 @@ exp_edit = true
 
 [node name="tree_graphics_options" type="OptionButton" parent="Control/VBoxContainer"]
 layout_mode = 2
-item_count = 5
+item_count = 6
 selected = 0
 popup/item_0/text = "original"
 popup/item_0/id = 0
@@ -207,6 +205,8 @@ popup/item_3/text = "speed_tree_grayscale"
 popup/item_3/id = 3
 popup/item_4/text = "speed_tree_greenscale"
 popup/item_4/id = 4
+popup/item_5/text = "dynamic"
+popup/item_5/id = 5
 script = ExtResource("8_8hgol")
 
 [connection signal="bake_finished" from="NavigationRegion3D" to="." method="_on_navigation_region_3d_bake_finished"]
@@ -214,8 +214,8 @@ script = ExtResource("8_8hgol")
 [connection signal="value_changed" from="Control/VBoxContainer/sunrot_x/HSlider" to="Control/VBoxContainer/sunrot_x" method="_on_value_changed"]
 [connection signal="value_changed" from="Control/VBoxContainer/sunrot_y/HSlider" to="DirectionalLight3D" method="_on_y_changed"]
 [connection signal="value_changed" from="Control/VBoxContainer/sunrot_y/HSlider" to="Control/VBoxContainer/sunrot_y" method="_on_value_changed"]
-[connection signal="value_changed" from="Control/VBoxContainer/wind_rot/HSlider" to="Control/VBoxContainer/wind_rot" method="_on_wind_rot_changed"]
 [connection signal="value_changed" from="Control/VBoxContainer/wind_rot/HSlider" to="Control/VBoxContainer/wind_rot" method="_on_arrow_changed"]
+[connection signal="value_changed" from="Control/VBoxContainer/wind_rot/HSlider" to="Control/VBoxContainer/wind_rot" method="_on_wind_rot_changed"]
 [connection signal="value_changed" from="Control/VBoxContainer/wind_strength/HSlider" to="Control/VBoxContainer/wind_strength" method="_on_value_changed"]
 [connection signal="value_changed" from="Control/VBoxContainer/wind_strength/HSlider" to="Control/VBoxContainer/wind_strength" method="_onwind_strength_changed"]
 [connection signal="item_selected" from="Control/VBoxContainer/tree_graphics_options" to="Control/VBoxContainer/tree_graphics_options" method="_on_item_selected"]

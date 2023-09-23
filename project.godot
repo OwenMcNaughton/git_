@@ -18,3 +18,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 Utils="*res://Utils.gd"
+
+[dotnet]
+
+project/assembly_name="excellent_shader"

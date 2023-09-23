@@ -39,3 +39,7 @@ func _process(delta):
 	look_at(target_position_for_reverse_look, Vector3(0.01, 1, 0.01))
 
 	position += new_velocity * delta
+
+
+func init(i):
+	$Area3D.name = str(i)

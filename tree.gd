@@ -28,9 +28,21 @@ var bot_e = preload("res://bot_e.png")
 var mid_e = preload("res://mid_e.png")
 var top_e = preload("res://top_e.png")
 
+var one_a = preload("res://1a.png")
+var one_b = preload("res://1b.png")
+var one_c = preload("res://1c.png")
+var two_a = preload("res://2a.png")
+var two_b = preload("res://2b.png")
+var two_c = preload("res://2c.png")
+var thr_a = preload("res://3a.png")
+var thr_b = preload("res://3b.png")
+var thr_c = preload("res://3c.png")
+var fou_a = preload("res://4a.png")
+var fou_b = preload("res://4b.png")
+var fou_c = preload("res://4c.png")
 
 func _ready() -> void:
-	set_graphics("original")
+	set_graphics("dynamic")
 	
 	$leaves_1.material_override = $leaves_1.material_override.duplicate()
 	$leaves_2.material_override = $leaves_2.material_override.duplicate()
@@ -61,9 +73,10 @@ func _process(delta: float) -> void:
 		gp = rotate_around_center(gp, Vector2(0.5, 0.5), rotation.y)
 		_centers.append(gp)
 		my_root.occluders += 1
-	l1.material_override.set_shader_parameter("vignette_centers", _centers)
-	l2.material_override.set_shader_parameter("vignette_centers", _centers)
-	l3.material_override.set_shader_parameter("vignette_centers", _centers)
+	if _centers.size() > 0:
+		l1.material_override.set_shader_parameter("vignette_centers", _centers)
+		l2.material_override.set_shader_parameter("vignette_centers", _centers)
+		l3.material_override.set_shader_parameter("vignette_centers", _centers)
 
 
 func rotate_around_center(point: Vector2, center: Vector2, angle: float) -> Vector2:
@@ -83,9 +96,6 @@ func _on_area_3d_area_entered(area: Area3D) -> void:
 
 func _on_area_3d_area_exited(area: Area3D) -> void:
 	_occluders.erase(area)
-	$leaves_1.material_override.set_shader_parameter("vignette_center", Vector2(100, 100))
-	$leaves_2.material_override.set_shader_parameter("vignette_center", Vector2(100, 100))
-	$leaves_3.material_override.set_shader_parameter("vignette_center", Vector2(100, 100))
 
 
 func set_wind_rot(rads: float):
@@ -181,3 +191,21 @@ func set_graphics(option: String):
 			$leaves_1.material_override.set_shader_parameter("image_texture", bot_e)
 			$leaves_2.material_override.set_shader_parameter("image_texture", mid_e)
 			$leaves_3.material_override.set_shader_parameter("image_texture", top_e)
+		"dynamic":
+			match randi() % 4:
+				0:
+					$leaves_1.material_override.set_shader_parameter("image_texture", one_a)
+					$leaves_2.material_override.set_shader_parameter("image_texture", one_b)
+					$leaves_3.material_override.set_shader_parameter("image_texture", one_c)
+				1:
+					$leaves_1.material_override.set_shader_parameter("image_texture", two_a)
+					$leaves_2.material_override.set_shader_parameter("image_texture", two_b)
+					$leaves_3.material_override.set_shader_parameter("image_texture", two_c)
+				2:
+					$leaves_1.material_override.set_shader_parameter("image_texture", thr_a)
+					$leaves_2.material_override.set_shader_parameter("image_texture", thr_b)
+					$leaves_3.material_override.set_shader_parameter("image_texture", thr_c)
+				3:
+					$leaves_1.material_override.set_shader_parameter("image_texture", fou_a)
+					$leaves_2.material_override.set_shader_parameter("image_texture", fou_b)
+					$leaves_3.material_override.set_shader_parameter("image_texture", fou_c)
