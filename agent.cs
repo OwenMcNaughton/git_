@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.ComponentModel;
 
 public partial class agent : Node3D
 {
@@ -8,8 +9,8 @@ public partial class agent : Node3D
 	private AnimationPlayer anim_player;
 	public bool activated = false;
 
-	[Signal]
-	public delegate void pathEventHandler(agent arg1);
+	//[Signal]
+	//public delegate void pathEventHandler(agent arg1);
 
 
 	public override void _Ready()
@@ -24,7 +25,9 @@ public partial class agent : Node3D
 	public override void _Process(double delta)
 	{
 		if (activated && navigation_agent.IsNavigationFinished()) {
-			EmitSignal(SignalName.path, this);
+			// EmitSignal(SignalName.path, (agent)this);
+			give_agent_path();
+			return;
 		}
 
 		Vector3 current_agent_position = this.GlobalPosition;
@@ -42,8 +45,17 @@ public partial class agent : Node3D
 		Position += new Vector3(new_velocity.X * (float)delta, new_velocity.Y * (float)delta, new_velocity.Z * (float)delta);
 	}
 
-	public void go_to(Node3D target) 
+
+	public void init(int i)
 	{
+		GetNode<Area3D>("Area3D").Name = i.ToString();
+	}
+
+	private void give_agent_path()
+	{
+		Godot.Collections.Array<Godot.Node> targets = GetNode<Node3D>("../../NavigationRegion3D/trees").GetChildren();
+		Random rnd = new Random();
+		Node3D target = (Node3D)targets[rnd.Next(targets.Count)];
 		navigation_agent.TargetPosition = target.GlobalPosition;
 	}
 }

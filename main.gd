@@ -26,7 +26,6 @@ func _ready() -> void:
 	texture.noise = FastNoiseLite.new()
 	await texture.changed
 	var image = texture.get_image()
-	var data = image.get_data()
 	
 	var all_data = []
 	var tot = 0
@@ -51,7 +50,7 @@ func _ready() -> void:
 		for y in range(max):
 			var xx = Utils.remap(x, 0, max, 0, 512)
 			var yy = Utils.remap(y, 0, max, 0, 512)
-			if texture.noise.get_noise_2d(xx, yy) > 0.1:
+			if texture.noise.get_noise_2d(xx, yy) > 0.0:
 				var r = 0.25
 				var spawn_loc: Vector3 = Vector3(
 					Utils.remap(x, 0, max, -36 + randf_range(-r, r), 36 + randf_range(-r, r)), 
@@ -72,7 +71,7 @@ func add_tree(pos: Vector3) -> void:
 func _on_navigation_region_3d_bake_finished() -> void:
 	for i in range(1000):
 		var agent = agent_scene.instantiate()
-		agent.position = Vector3(Utils.randf_range(-10, 10), 111.1, Utils.randf_range(-10, 10))
+		agent.position = Vector3(Utils.randf_range(-20, 20), 0.1, Utils.randf_range(-20, 20))
 		agent.activated = true
 		agent.path.connect(give_agent_path)
 		agent.init(i)

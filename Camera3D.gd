@@ -75,7 +75,7 @@ func _process(delta: float) -> void:
 		print("MID")
 		for tree in get_tree().get_nodes_in_group("trees"):
 			tree.set_mid_from_high_lod()
-	if old_size > 40 and size < 40:
+	if old_size > 50 and size < 50:
 		print("MID")
 		for tree in get_tree().get_nodes_in_group("trees"):
 			tree.set_mid_from_low_lod()
@@ -83,7 +83,7 @@ func _process(delta: float) -> void:
 		print("HIGH")
 		for tree in get_tree().get_nodes_in_group("trees"):
 			tree.set_high_lod()
-	if old_size < 40 and size > 40:
+	if old_size < 50 and size > 50:
 		print("LOW")
 		for tree in get_tree().get_nodes_in_group("trees"):
 			tree.set_low_lod()

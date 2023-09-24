@@ -1,6 +1,7 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 
 public partial class tree : Node3D
 {
@@ -21,28 +22,43 @@ public partial class tree : Node3D
 	private Texture2D mid_e = ResourceLoader.Load<Texture2D>("res://mid_e.png");
 	private Texture2D top_e = ResourceLoader.Load<Texture2D>("res://top_e.png");
 
+	private Texture2D  one_a = ResourceLoader.Load<Texture2D>("res://1a.png");
+	private Texture2D  one_b = ResourceLoader.Load<Texture2D>("res://1b.png");
+	private Texture2D  one_c = ResourceLoader.Load<Texture2D>("res://1c.png");
+	private Texture2D  two_a = ResourceLoader.Load<Texture2D>("res://2a.png");
+	private Texture2D  two_b = ResourceLoader.Load<Texture2D>("res://2b.png");
+	private Texture2D  two_c = ResourceLoader.Load<Texture2D>("res://2c.png");
+	private Texture2D  thr_a = ResourceLoader.Load<Texture2D>("res://3a.png");
+	private Texture2D  thr_b = ResourceLoader.Load<Texture2D>("res://3b.png");
+	private Texture2D  thr_c = ResourceLoader.Load<Texture2D>("res://3c.png");
+	private Texture2D  fou_a = ResourceLoader.Load<Texture2D>("res://4a.png");
+	private Texture2D  fou_b = ResourceLoader.Load<Texture2D>("res://4b.png");
+	private Texture2D  fou_c = ResourceLoader.Load<Texture2D>("res://4c.png");
+
+
 	private MeshInstance3D l1;
 	private MeshInstance3D l2;
 	private MeshInstance3D l3;
 	private Node3D my_root;
 	private CollisionShape3D collision;
 	private Dictionary<string, Area3D> _occluders = new Dictionary<string, Area3D>();
-	private Vector2[] _centers;
+	private Godot.Vector2[] _centers;
 
 	public override void _Ready()
 	{
+
 		l1 = GetNode<MeshInstance3D>("leaves_1");
 		l2 = GetNode<MeshInstance3D>("leaves_2");
 		l3 = GetNode<MeshInstance3D>("leaves_3");
 		my_root = GetParent<Node3D>().GetParent<NavigationRegion3D>().GetParent<Node3D>();
 		collision = GetNode<CollisionShape3D>("Area3D/CollisionShape3D");
 
-		set_graphics("original");
+		set_graphics("dynamic");
 
 		l1.MaterialOverride = (ShaderMaterial)(l1.MaterialOverride.Duplicate());
 		l2.MaterialOverride = (ShaderMaterial)(l2.MaterialOverride.Duplicate());
 		l3.MaterialOverride = (ShaderMaterial)(l3.MaterialOverride.Duplicate());
-		set_low_lod();
+		set_high_lod();
 
 		ShaderMaterial l1m = (ShaderMaterial)l1.MaterialOverride;
 		ShaderMaterial l2m = (ShaderMaterial)l2.MaterialOverride;
@@ -52,27 +68,32 @@ public partial class tree : Node3D
 		l2m.SetShaderParameter("rotation", 90 - Rotation.Y);
 		l3m.SetShaderParameter("rotation", 90 - Rotation.Y);
 
-		float to = 0.1f + GD.Randf() * (1.9f - 0.1f);
+		float to = 0.8f + GD.Randf() * (1.2f - 0.8f);
 		l1m.SetShaderParameter("time_offset", to);
 		l2m.SetShaderParameter("time_offset", to);
 		l3m.SetShaderParameter("time_offset", to);
+
+		Godot.Vector2[] dv = dummy_vignettes();
+		l1m.SetShaderParameter("vignette_centers", dv);
+		l2m.SetShaderParameter("vignette_centers", dv);
+		l3m.SetShaderParameter("vignette_centers", dv);
 
 		AddToGroup("trees");
 	}
 
 	public override void _Process(double delta)
 	{
-		_centers = new Vector2[_occluders.Count];
+		_centers = new Godot.Vector2[_occluders.Count];
 		int idx = 0;
 		foreach (KeyValuePair<string, Area3D> entry in _occluders)
     {
-			Vector3 gp = GlobalPosition - entry.Value.GlobalPosition;
-			Vector3 s = ((BoxShape3D)collision.Shape).Size;
-			Vector2 gp2 = new Vector2(
+			Godot.Vector3 gp = GlobalPosition - entry.Value.GlobalPosition;
+			Godot.Vector3 s = ((BoxShape3D)collision.Shape).Size;
+			Godot.Vector2 gp2 = new Godot.Vector2(
 				normalize(gp.X, s.X * 0.5f, -s.X * 0.5f),
 				normalize(gp.Z, s.Z * 0.5f, -s.Z * 0.5f)
 			);
-			gp2 = rotate_around_center(gp2, new Vector2(0.5f, 0.5f), Rotation.Y);
+			gp2 = rotate_around_center(gp2, new Godot.Vector2(0.5f, 0.5f), Rotation.Y);
 			_centers[idx++] = gp2;
 			// my_root.occluders += 1;
 		}
@@ -84,12 +105,20 @@ public partial class tree : Node3D
 		l3m.SetShaderParameter("vignette_centers", _centers);
 	}
 
+	private Godot.Vector2[] dummy_vignettes() {
+		Godot.Vector2[] v = new Godot.Vector2[5];
+		for (int i = 0; i != 5; i++) {
+			v[i] = new Godot.Vector2(100, 100);
+		}
+		return v;
+	}
+
 	private float normalize(float value, float min_original, float max_original) 
 	{
 		return (value - min_original) / (max_original - min_original);
 	}
 
-	private Vector2 rotate_around_center(Vector2 point, Vector2 center, float angle)
+	private Godot.Vector2 rotate_around_center(Godot.Vector2 point, Godot.Vector2 center, float angle)
   {
 		float s = (float)Math.Sin(angle);
 		float c = (float)Math.Cos(angle);
@@ -137,21 +166,28 @@ public partial class tree : Node3D
 		l3m.SetShaderParameter("time_factor", value);
 
 		l1m.SetShaderParameter(
-			"sway_frequency", remap(value, min, max, 0.1f, 3f));
+			"sway_frequency", remap(value, min, max, 0.25f, 5f));
 		l2m.SetShaderParameter(
-			"sway_frequency", remap(value, min, max, 0.1f, 3f));
+			"sway_frequency", remap(value, min, max, 0.25f, 5f));
 		l3m.SetShaderParameter(
-			"sway_frequency", remap(value, min, max, 0.1f, 3f));
+			"sway_frequency", remap(value, min, max, 0.25f, 5f));
 
 		l1m.SetShaderParameter(
-			"sway_amplitude", remap(value, min, max, 0.01f, 0.06f));
+			"sway_amplitude", remap(value, min, max, 0.01f, 0.09f));
 		l2m.SetShaderParameter(
-			"sway_amplitude", remap(value, min, max, 0.03f, 0.10f));
+			"sway_amplitude", remap(value, min, max, 0.03f, 0.15f));
 		l3m.SetShaderParameter(
-			"sway_amplitude", remap(value, min, max, 0.05f, 0.15f));
+			"sway_amplitude", remap(value, min, max, 0.05f, 0.21f));
+
+		l1m.SetShaderParameter(
+			"noise_factor", remap(value, min, max, 0.005f, 0.025f));
+		l2m.SetShaderParameter(
+			"noise_factor", remap(value, min, max, 0.005f, 0.025f));
+		l3m.SetShaderParameter(
+			"noise_factor", remap(value, min, max, 0.005f, 0.025f));
 	}
 
-	private void set_low_lod()
+	private void set_mid_from_high_lod()
 	{
 		l2.Transparency = 0.0f;
 		l3.Transparency = 0.0f;
@@ -165,6 +201,40 @@ public partial class tree : Node3D
 		tween_2.TweenProperty(l3, "transparency", 1.0, 0.2f);
 		Tween tween_3 = GetTree().CreateTween();
 		tween_3.TweenProperty(GetNode<MeshInstance3D>("dirt"), "transparency", 1.0, 0.2);
+		tween_3.TweenCallback(Callable.From(set_invisible));
+		GetNode<Sprite3D>("greendot").Visible = false;
+		l1.Visible = true;
+		l1.Transparency = 0.0f;
+	}
+
+	private void set_low_lod() {
+		l1.Transparency = 0.0f;
+		l1.CastShadow = GeometryInstance3D.ShadowCastingSetting.Off;
+		GetNode<Sprite3D>("greendot").Visible = true;
+		GetNode<Sprite3D>("greendot").Transparency = 1.0f;
+		GetNode<Sprite3D>("greendot").CastShadow = GeometryInstance3D.ShadowCastingSetting.Off;
+		Tween tween_1 = GetTree().CreateTween();
+		tween_1.TweenProperty(l1, "transparency", 1.0, 0.25);
+		Tween tween_2 = GetTree().CreateTween();
+		tween_2.TweenProperty(GetNode<Sprite3D>("greendot"), "transparency", 0.0, 0.25);
+		GetNode<Sprite3D>("greendot").Rotation = new Godot.Vector3(0, -Rotation.Y, 0);
+		tween_2.TweenCallback(Callable.From(set_all_invisible));
+	}
+
+	
+	private void set_mid_from_low_lod()
+	{
+		l1.Transparency = 1.0f;
+		l1.Visible = true;
+		Tween tween_1 = GetTree().CreateTween();
+		tween_1.TweenProperty(l2, "transparency", 1.0, 0.2f);
+		tween_1.TweenCallback(Callable.From(set_mid_from_low_callback));
+		GetNode<Sprite3D>("greendot").Visible = false;
+	}
+
+	
+	private void set_mid_from_low_callback() {
+		GetNode<Sprite3D>("greendot").Visible = false;
 	}
 
 	private void set_high_lod()
@@ -184,13 +254,18 @@ public partial class tree : Node3D
 		Tween tween_3 = GetTree().CreateTween();
 		tween_3.TweenProperty(GetNode<MeshInstance3D>("dirt"), "transparency", 0.0, 0.2);
 		tween_3.TweenCallback(Callable.From(set_shadow_on));
+		GetNode<Sprite3D>("greendot").Visible = false;
 	}
 
 	private void set_invisible()
-  {
-		l1.Visible = false;
+ 	 {
 		l2.Visible = false;
+		l3.Visible = false;
 		GetNode<MeshInstance3D>("dirt").Visible = false;
+	}
+	private void set_all_invisible() 
+	{
+		l1.Visible = false;
 	}
 
 	private void set_shadow_on()
@@ -202,6 +277,7 @@ public partial class tree : Node3D
 
 	private void set_graphics(String option)
 	{
+		Random rnd = new Random();
 		ShaderMaterial l1m = (ShaderMaterial)l1.MaterialOverride;
 		ShaderMaterial l2m = (ShaderMaterial)l2.MaterialOverride;
 		ShaderMaterial l3m = (ShaderMaterial)l3.MaterialOverride;
@@ -231,6 +307,30 @@ public partial class tree : Node3D
 				l1m.SetShaderParameter("image_texture", bot_e);
 				l2m.SetShaderParameter("image_texture", mid_e);
 				l3m.SetShaderParameter("image_texture", top_e);
+				break;
+			case "dynamic":
+				switch (rnd.Next(0, 4)) {
+					case 0:
+						l1m.SetShaderParameter("image_texture", one_a);
+						l2m.SetShaderParameter("image_texture", one_b);
+						l3m.SetShaderParameter("image_texture", one_c);
+						break;
+					case 1:
+						l1m.SetShaderParameter("image_texture", two_a);
+						l2m.SetShaderParameter("image_texture", two_b);
+						l3m.SetShaderParameter("image_texture", two_c);
+						break;
+					case 2:
+						l1m.SetShaderParameter("image_texture", thr_a);
+						l2m.SetShaderParameter("image_texture", thr_b);
+						l3m.SetShaderParameter("image_texture", thr_c);
+						break;
+					case 3:
+						l1m.SetShaderParameter("image_texture", fou_a);
+						l2m.SetShaderParameter("image_texture", fou_b);
+						l3m.SetShaderParameter("image_texture", fou_c);
+						break;
+				}
 				break;
 		}
 	}

@@ -12,7 +12,7 @@ uniform sampler2D image_texture;
 uniform float alpha_threshold = 0.01;
 
 uniform vec2 noise_speed = vec2(0.25, 0.0);
-uniform float noise_scale = 0.02;
+uniform float noise_scale = 0.06;
 
 uniform float sway_frequency: hint_range(0.2, 2) = 1.0;
 uniform float sway_amplitude: hint_range(0.01, 0.1) = 0.05;
@@ -57,8 +57,8 @@ vec3 make_sway() {
 
 vec3 perm_sway() {
     return vec3(
-		sin(-rotation + 3.14 / 2.0) * sway_amplitude / 1.5,
-		cos(-rotation + 3.14 / 2.0) * sway_amplitude / 1.5,
+		sin(-rotation + 3.14 / 2.0) * sway_amplitude / 1.0,
+		cos(-rotation + 3.14 / 2.0) * sway_amplitude / 1.0,
 		0
 	);	
 }

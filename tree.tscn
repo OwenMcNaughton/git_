@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://c5x177oe2jabf" path="res://greendot.png" id="6_boeln"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_uj2u5"]
+size = Vector3(0.7, 1, 0.7)
 
 [sub_resource type="QuadMesh" id="QuadMesh_2r22m"]
 subdivide_width = 64

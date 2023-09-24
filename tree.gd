@@ -73,23 +73,34 @@ func _process(delta: float) -> void:
 		var gp = global_position - area.global_position
 		var s = collision.shape.size
 		gp = Vector2(
-			Utils.normalize(gp.x, s.x * 0.5, -s.x * 0.5),
-			Utils.normalize(gp.z, s.z * 0.5, -s.z * 0.5)
+			Utils.normalize(gp.x, s.x * 0.714, -s.x * 0.714),
+			Utils.normalize(gp.z, s.z * 0.714, -s.z * 0.714)
 		)
 		gp = rotate_around_center(gp, Vector2(0.5, 0.5), rotation.y)
 		_centers.append(gp)
-		my_root.occluders += 1
 	if _centers.size() > 0:
-		l1.material_override.set_shader_parameter("vignette_centers", _centers)
-		l2.material_override.set_shader_parameter("vignette_centers", _centers)
-		l3.material_override.set_shader_parameter("vignette_centers", _centers)
+		if l1.visible:
+			l1.material_override.set_shader_parameter("vignette_centers", _centers)
+			my_root.occluders += 1
+		if l2.visible:
+			l2.material_override.set_shader_parameter("vignette_centers", _centers)
+			my_root.occluders += 1
+		if l3.visible:
+			l3.material_override.set_shader_parameter("vignette_centers", _centers)
+			my_root.occluders += 1
 		_last_center_size = _centers.size()
 	else:
 		if _last_center_size != 0:
 			var dv = dummy_vignettes()
-			l1.material_override.set_shader_parameter("vignette_centers", dv)
-			l2.material_override.set_shader_parameter("vignette_centers", dv)
-			l3.material_override.set_shader_parameter("vignette_centers", dv)
+			if l1.visible:
+				l1.material_override.set_shader_parameter("vignette_centers", dv)
+				my_root.occluders += 1
+			if l2.visible:
+				l2.material_override.set_shader_parameter("vignette_centers", dv)
+				my_root.occluders += 1
+			if l3.visible:
+				l3.material_override.set_shader_parameter("vignette_centers", dv)
+				my_root.occluders += 1
 		_last_center_size = 0
 
 
@@ -131,18 +142,25 @@ func set_wind_strength(value: float, min: float, max: float):
 	l3.material_override.set_shader_parameter("time_factor", value)
 	
 	l1.material_override.set_shader_parameter(
-		"sway_frequency", Utils.remap(value, min, max, 0.1, 3))
+		"sway_frequency", Utils.remap(value, min, max, 0.25, 5))
 	l2.material_override.set_shader_parameter(
-		"sway_frequency", Utils.remap(value, min, max, 0.1, 3))
+		"sway_frequency", Utils.remap(value, min, max, 0.25, 5))
 	l3.material_override.set_shader_parameter(
-		"sway_frequency", Utils.remap(value, min, max, 0.1, 3))
+		"sway_frequency", Utils.remap(value, min, max, 0.25, 5))
 		
 	l1.material_override.set_shader_parameter(
-		"sway_amplitude", Utils.remap(value, min, max, 0.03, 0.09))
+		"sway_amplitude", Utils.remap(value, min, max, 0.01, 0.09))
 	l2.material_override.set_shader_parameter(
-		"sway_amplitude", Utils.remap(value, min, max, 0.06, 0.15))
+		"sway_amplitude", Utils.remap(value, min, max, 0.03, 0.15))
 	l3.material_override.set_shader_parameter(
-		"sway_amplitude", Utils.remap(value, min, max, 0.09, 0.21))
+		"sway_amplitude", Utils.remap(value, min, max, 0.05, 0.21))
+		
+	l1.material_override.set_shader_parameter(
+		"noise_factor", Utils.remap(value, min, max, 0.005, 0.025))
+	l2.material_override.set_shader_parameter(
+		"noise_factor", Utils.remap(value, min, max, 0.005, 0.025))
+	l3.material_override.set_shader_parameter(
+		"noise_factor", Utils.remap(value, min, max, 0.005, 0.025))
 
 
 func set_low_lod() -> void:

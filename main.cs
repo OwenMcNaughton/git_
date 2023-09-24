@@ -1,5 +1,6 @@
 using Godot;
 using System;
+using System.Threading.Tasks;
 
 public partial class main : Node3D
 {
@@ -7,24 +8,39 @@ public partial class main : Node3D
 	private PackedScene tree_scene = ResourceLoader.Load<PackedScene>("res://tree.tscn");
 	private PackedScene agent_scene = ResourceLoader.Load<PackedScene>("res://agent.tscn");
 	public float occluders;
+	private static Random random = new Random();
 
-	public override void _Ready()
+	public override async void _Ready()
 	{
-		int max = 64;
-		for (int i = 0; i < max; i++)
-    {
-			for (int j = 0; j < max; j++)
-      {
-				Vector3 spawn_loc = new Vector3(
-					remap(i, 0, max, -32, 32),
-					0,
-					remap(j, 0, max, -32, 32)
-				);
-				add_tree(spawn_loc);
+
+		NoiseTexture2D texture = new NoiseTexture2D();
+		texture.Noise = new FastNoiseLite();
+		await Task.Delay(1000);
+		Image image = texture.GetImage();
+
+		int max = 100;
+		for (int x = 0; x != max; x++) {
+			for (int y = 0; y != max; y++) {
+				float xx = remap(x, 0, max, 0, 512);
+				float yy = remap(y, 0, max, 0, 512);
+				if (texture.Noise.GetNoise2D(xx, yy) > 0.1) {
+					float r = 0.25f;
+					Vector3 spawn_loc = new Vector3(
+						remap(x, 0, max, -36 + Randf(-r, r), 36 + Randf(-r, r)),
+						0,
+						remap(y, 0, max, -36 + Randf(-r, r), 36 + Randf(-r, r))
+					);
+					add_tree(spawn_loc);
+				}
 			}
-    }
+		}
 		GetNode<NavigationRegion3D>("NavigationRegion3D").BakeNavigationMesh();
 	}
+
+	public static float Randf(float min, float max)
+    {
+        return (float)(min + (random.NextDouble() * (max - min)));
+    }
 
 	public override void _Process(double delta)
 	{
@@ -33,9 +49,8 @@ public partial class main : Node3D
 	}
 
 	public void set_cam_size(float size)
-  {
+  	{
 		GetNode<Label>("Control/cam_size").Text = "Cam Size: " + Math.Round(size).ToString();
-
 	}
 
 	private float remap(float value, float old_min, float old_max, float new_min, float new_max)
@@ -53,21 +68,15 @@ public partial class main : Node3D
 
 	public void _on_navigation_region_3d_bake_finished()
   {
-		for (int i = 0; i < 1000; i++)
-    {
+		for (int i = 0; i < 2000; i++)
+    	{
+			GD.Print(i);
 			agent agent = (agent)agent_scene.Instantiate();
 			agent.Position = new Vector3(-10.0f + GD.Randf() * (20.0f), 0.1f, -10.0f + GD.Randf() * (20.0f));
 			agent.activated = true;
-			Action myAction = () => { give_agent_path(agent); };
-			agent.Connect("path", Callable.From(myAction));
+			agent.init(i);
+			GetNode<Node3D>("agents").AddChild(agent);
 		}
   }
 
-	private void give_agent_path(agent agent)
-  {
-		Godot.Collections.Array<Godot.Node> targets = GetNode<Node3D>("NavigationRegion3D/trees").GetChildren();
-		Random rnd = new Random();
-		Node3D target = (Node3D)targets[rnd.Next(targets.Count)];
-		agent.go_to(target);
-  }
 }
